@@ -1,12 +1,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import "~slick-carousel/slick/slick.css";
+@import "~slick-carousel/slick/slick-theme.css";
 
+/* Define color variables for light and dark modes */
 :root {
   --background: #ffffff;
   --foreground: #171717;
 }
 
+/* Dark mode color variables */
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
@@ -14,14 +18,31 @@
   }
 }
 
+/* Apply global styles */
 body {
-  color: var(--foreground);
-  background: var(--background);
+  color:#171717;
+  background: #ffffff;
   font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
 }
 
+/* Ensure smooth color transitions for dark mode changes */
+html {
+  transition: color 0.3s, background-color 0.3s;
+}
+
+/* Utility class for balanced text wrapping */
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+}
+
+/* Additional utility for responsive font sizes */
+@layer utilities {
+  .text-responsive {
+    font-size: clamp(1rem, 2vw + 1rem, 2.5rem);
   }
 }
