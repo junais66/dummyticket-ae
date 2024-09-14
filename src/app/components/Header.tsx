@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { PaperAirplaneIcon, GlobeAltIcon } from '@heroicons/react/24/outline'
+import { PaperAirplaneIcon } from '@heroicons/react/24/outline'
 
 export default function Header() {
   return (

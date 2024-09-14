@@ -95,25 +95,35 @@ export default function BookingForm() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <div className="relative">
-          <label className="block text-sky-500 text-xs mb-1">Departure Date</label>
-          <DatePicker
-            selected={departureDate}
-            onChange={(date: Date) => setDepartureDate(date)}
-            className="w-full p-2 border rounded-md bg-white text-gray-800 shadow-md"
-          />
-        </div>
-        {tripType === 'roundTrip' && (
-          <div className="relative">
-            <label className="block text-sky-500 text-xs mb-1">Return Date</label>
-            <DatePicker
-              selected={returnDate}
-              onChange={(date: Date) => setReturnDate(date)}
-              className="w-full p-2 border rounded-md bg-white text-gray-800 shadow-md"
-            />
-          </div>
-        )}
-      </div>
+  <div className="relative">
+    <label className="block text-sky-500 text-xs mb-1">Departure Date</label>
+    <DatePicker
+      selected={departureDate}
+      onChange={(date: Date | null) => {
+        if (date) {
+          setDepartureDate(date);
+        }
+      }}
+      className="w-full p-2 border rounded-md bg-white text-gray-800 shadow-md"
+    />
+  </div>
+
+  {tripType === 'roundTrip' && (
+    <div className="relative">
+      <label className="block text-sky-500 text-xs mb-1">Return Date</label>
+      <DatePicker
+        selected={returnDate}
+        onChange={(date: Date | null) => {
+          if (date) {
+            setReturnDate(date);
+          }
+        }}
+        className="w-full p-2 border rounded-md bg-white text-gray-800 shadow-md"
+      />
+    </div>
+  )}
+</div>
+
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
         <div>
@@ -237,69 +247,73 @@ function AirportSelect({ label, airports, selected, setSelected }: { label: stri
 
   return (
     <Listbox value={selected} onChange={setSelected}>
-      <div className="relative">
-        <Listbox.Label className="block mb-2 font-semibold text-black">{label}</Listbox.Label>
-        <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-3 pl-4 pr-10 text-left border text-black shadow-md focus:outline-none focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-opacity-75">
-          <span className="block truncate">{selected ? `${selected.city} (${selected.code})` : 'Select an airport'}</span>
-          <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-            <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-          </span>
-        </Listbox.Button>
-        <Transition
-          leave="transition ease-in duration-100"
-          leaveFrom="opacity-100"
-          leaveTo="opacity-0"
-        >
-          <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-20">
-            <div className="p-2">
-              <input
-                type="text"
-                placeholder="Search..."
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                className="w-full p-2 border rounded mb-2"
-              />
-            </div>
-            {filteredAirports.length === 0 ? (
+    <div className="relative">
+      <Listbox.Label className="block mb-2 font-semibold text-black">{label}</Listbox.Label>
+      <Listbox.Button className="relative w-full cursor-default rounded-lg bg-white py-3 pl-4 pr-10 text-left border text-black shadow-md focus:outline-none focus-visible:border-blue-500 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-opacity-75">
+        <span className="block truncate">
+          {selected ? `${selected.city} (${selected.code})` : 'Select an airport'}
+        </span>
+        <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+          <ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+        </span>
+      </Listbox.Button>
+      <Transition
+        leave="transition ease-in duration-100"
+        leaveFrom="opacity-100"
+        leaveTo="opacity-0"
+      >
+        <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-20">
+          <div className="p-2">
+            <input
+              type="text"
+              placeholder="Search..."
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              className="w-full p-2 border rounded mb-2"
+            />
+          </div>
+          {filteredAirports.length === 0 ? (
+            <Listbox.Option
+              value={null} // Set a value to prevent errors
+              disabled
+              className="cursor-default select-none px-4 py-2 text-gray-500"
+            >
+              No results found
+            </Listbox.Option>
+          ) : (
+            filteredAirports.map((airport) => (
               <Listbox.Option
-                disabled
-                className="cursor-default select-none px-4 py-2 text-gray-500"
+                key={airport.code}
+                value={airport} // Make sure each option has a value
+                className={({ active }) =>
+                  `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                    active ? 'bg-blue-100 text-blue-900' : 'text-gray-900'
+                  }`
+                }
               >
-                No results found
-              </Listbox.Option>
-            ) : (
-              filteredAirports.map((airport) => (
-                <Listbox.Option
-                  key={airport.code}
-                  className={({ active }) =>
-                    `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                      active ? 'bg-blue-100 text-blue-900' : 'text-gray-900'
-                    }`
-                  }
-                  value={airport}
-                >
-                  {({ selected }) => (
-                    <>
-                      <span
-                        className={`block truncate ${
-                          selected ? 'font-medium' : 'font-normal'
-                        }`}
-                      >
-                        {airport.city} ({airport.code})
+                {({ selected }) => (
+                  <>
+                    <span
+                      className={`block truncate ${
+                        selected ? 'font-medium' : 'font-normal'
+                      }`}
+                    >
+                      {airport.city} ({airport.code})
+                    </span>
+                    {selected && (
+                      <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600">
+                        <CheckIcon className="h-5 w-5" aria-hidden="true" />
                       </span>
-                      {selected ? (
-                        <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-blue-600">
-                          <CheckIcon className="h-5 w-5" aria-hidden="true" />
-                        </span>
-                      ) : null}
-                    </>
-                  )}
-                </Listbox.Option>
-              ))
-            )}
-          </Listbox.Options>
-        </Transition>
-      </div>
-    </Listbox>
+                    )}
+                  </>
+                )}
+              </Listbox.Option>
+            ))
+          )}
+        </Listbox.Options>
+      </Transition>
+    </div>
+  </Listbox>
+  
   )
 }
